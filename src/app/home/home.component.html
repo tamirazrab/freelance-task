@@ -1,7 +1,25 @@
 <div class="container">
   <h1 class="title">
-    {{ 'PAGES.HOME.TITLE' | translate }}
+    Electronic-Tube
   </h1>
 
-  <a routerLink="/detail">{{ 'PAGES.HOME.GO_TO_DETAIL' | translate }}</a>
+  <video #videoPlayer width="480" height="270" on-ended="onVideoEnded();" autoplay>Your browser does not support the
+    video tag.</video>
+  <div class='controls'>
+    <button title="Toggle Full Screen" class="btn btn--action" (click)="onFullscreen()">
+      <fa-icon [icon]="faExpand"></fa-icon>
+    </button>
+    <button title="Always on top" class="btn btn--action" (click)="onAlwaysTop()">
+      <fa-icon [icon]="faArrowUp"></fa-icon>
+    </button>
+    <button title="Open Developer tools" class="btn btn--danger" (click)="onDebug()">
+      <fa-icon [icon]="faBug"></fa-icon>
+    </button>
+    <button title="Reload application" class="btn btn--action" (click)="onReload()">
+      <fa-icon [icon]="faArrowCircleRight"></fa-icon>
+    </button>
+    <button title="Exit application" class="btn btn--action" (click)="onExit()">
+      <fa-icon [icon]="faCoffaLongArrowAltRight"></fa-icon>
+    </button>
+  </div>
 </div>

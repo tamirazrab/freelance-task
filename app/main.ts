@@ -1,4 +1,4 @@
-import { app, BrowserWindow, screen } from 'electron';
+import { app, BrowserWindow, screen, ipcMain } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as url from 'url';
@@ -22,12 +22,12 @@ function createWindow(): BrowserWindow {
       nodeIntegration: true,
       allowRunningInsecureContent: (serve) ? true : false,
       contextIsolation: false,  // false if you want to run e2e test with Spectron
+      preload: path.join(app.getAppPath() + '/app/', 'preload.ts')
     },
   });
 
 
   if (serve) {
-    win.webContents.openDevTools();
     require('electron-reload')(__dirname, {
       electron: require(path.join(__dirname, '/../node_modules/electron'))
     });
@@ -37,7 +37,7 @@ function createWindow(): BrowserWindow {
     let pathIndex = './index.html';
 
     if (fs.existsSync(path.join(__dirname, '../dist/index.html'))) {
-       // Path when running electron in local folder
+      // Path when running electron in local folder
       pathIndex = '../dist/index.html';
     }
 
@@ -87,3 +87,33 @@ try {
   // Catch Error
   // throw e;
 }
+
+ipcMain.handle('close-main-window', async (evt) => {
+  win.close();
+});
+
+ipcMain.handle('maximize-main-window', async (evt) => {
+  win.maximize();
+});
+
+ipcMain.handle('reload-main-window', async (evt) => {
+  win.reload();
+  win.loadURL('http://localhost:4200');
+});
+
+ipcMain.handle('debug-main-window', async (evt) => {
+  win.webContents.openDevTools();
+});
+
+ipcMain.handle('top-main-window', async (evt) => {
+  // win.setAlwaysOnTop(true, 'normal');
+  win.setAlwaysOnTop(true, 'normal');
+  setTimeout(() => {
+    win.setAlwaysOnTop(false, 'normal');
+  }, 1000)
+});
+
+ipcMain.handle('toggle-fullscreen-main-window', async (evt) => {
+  const isFullscreen = win.isFullScreen()
+  win.setFullScreen(isFullscreen ? false : true)
+});
